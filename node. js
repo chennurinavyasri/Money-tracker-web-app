@@ -1,24 +1,87 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const transactionsRouter = require('./routes/transactions');
+let expenses =[];
+let totalAmount = 0;
 
-const app = express();
+const categorySelect = document.getElementById('category-select')
+const amountInput = document.getElementById('amount-input')
+const dateInput = document.getElementById('date-input')
+const addBtn = document.getElementById('add-btn')
+const expenseTableBody = document.getElementById('expense-table-body')
+const totalAmountCell = document.getElementById('total-amount')
 
-// Middleware
-app.use(express.json());
+addBtn.addEventListener('click', function(){
+    const category = categorySelect.value;
+    const amount = Number(amountInput.value);
+    const date= dateInput.value;
 
-// MongoDB connection
-mongoose.connect('mongodb://localhost:27017/moneyTracker', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Error connecting to MongoDB:', err));
+    if(category === ''){
+        alert('please select a category');
+        return;
+    }
+    if(isNaN(amount) || amount <= 0){
+        alert('please enter a valid amount');
+        return;
+    }
+    if(date ===''){
+        alert('please select a date');
+        return;
+    }
+    expenses.push({category,amount,date})
 
-// Routes
-app.use('/api/transactions', transactionsRouter);
+    totalAmount += amount;
+    totalAmountCell.textContent=totalAmount;
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    const newRow = expenseTableBody.insertRow();
+
+    const categoryCell = newRow.insertCell();
+    const AmountCell = newRow.insertCell();
+    const dateCell = newRow.insertCell();
+    const deleteCell = newRow.insertCell();
+
+    const deleteBtn = document.createElement('button');
+
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.addEventListener('click', function(){
+        expenses.splice(expenses.indexOf(expense),1);
+
+        totalAmount -= expense.amount;
+        totalAmountCell.textContent = totalAmount;
+
+        expenseTableBody.removeChild(newRow);
+    })
+    const expense= expenses[expenses.length - 1];
+    categoryCell.textContent=expense.category;
+    AmountCell.textContent=expense.amount;
+    dateCell.textContent=expense.date;
+    deleteCell.appendChild(deleteBtn);
+
 });
+for(const exepense of expenses){
+    totalAmount += amount;
+    totalAmountCell.textContent=totalAmount;
+
+    const newRow = expenseTableBody.insertRow();
+
+    const categoryCell = newRow.insertCell();
+    const AmountCell = newRow.insertCell();
+    const dateCell = newRow.insertCell();
+    const deleteCell = newRow.insertCell();
+
+    const deleteBtn = document.createElement('button');
+
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('delete-btn');
+    deleteBtn.addEventListener('click', function(){
+        expenses.splioce(expenses.indexOf(expense),1);
+
+        totalAmount -= expense.amount;
+        totalAmountCell.textContent = totalAmount;
+
+        expenseTableBody.removeChild(newRow);
+    })
+    const expense= expenses[expenses.length - 1];
+    categoryCell.textContent=expense.category;
+    AmountCell.textContent=expense.amount;
+    dateCell.textContent=expense.date;
+    deleteCell.appendChild(deleteBtn);
+}
